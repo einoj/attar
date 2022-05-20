@@ -26,11 +26,15 @@ proc alu(machine: ref chip8) =
       of 0x00E0:
         echo fmt"display_clear"
       of 0x00EE:
-        echo fmt"return"
+        return_subroutine(machine)
       of 0x1000..0x1fff:
         jump_to_addr(machine, lower12bits)
       of 0x6000..0x6fff:
         set_variable(machine, lower12bits)
+      of 0x2000..0x2fff:
+        call_subroutine(machine, lower12bits)
+      of 0xa000..0xafff:
+        set_pointer_reg(machine, lower12bits)
       of 0xf000..0xffff:
         n.bitslice(0..7)
         case n:
