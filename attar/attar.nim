@@ -62,11 +62,11 @@ proc gui =
     window: WindowPtr
     render: RendererPtr
     surface: SurfacePtr
-    framebuf: array[64*32, uint32]
+    framebuf: array[64*32, uint8]
 
   window = createWindow("Attar", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, W, H, SDL_WINDOW_RESIZABLE)
   render = createRenderer(window, -1, 1);
-  var texture = createTexture(render, SDL_PIXELFORMAT_RGBA8888,
+  var texture = createTexture(render, SDL_PIXELFORMAT_RGB332,
                               SDL_TEXTUREACCESS_STREAMING, W, H);
   discard setLogicalSize(render, W, H);
 
@@ -80,10 +80,10 @@ proc gui =
         runGame = false
         break
     for i in 0..W*H-1:
-      framebuf[i] = uint32 0xffffffff
+      framebuf[i] = uint8 0x55
 
     clear(render);
-    updateTexture(texture, nil, addr framebuf, W * sizeof(uint32));
+    updateTexture(texture, nil, addr framebuf, W * sizeof(uint8));
     copy(render, texture, nil, nil);
 
     present(render);
