@@ -55,12 +55,20 @@ proc alu(machine: ref chip8) =
 proc gui =
   discard sdl2.init(INIT_EVERYTHING)
 
+  const W: cint = 64
+  const H: cint = 32
+
   var
     window: WindowPtr
     render: RendererPtr
+    surface: SurfacePtr
+    framebuf: array[64*32, uint32]
 
-  window = createWindow("SDL Skeleton", 100, 100, 640,480, SDL_WINDOW_SHOWN)
-  render = createRenderer(window, -1, Renderer_Accelerated or Renderer_PresentVsync or Renderer_TargetTexture)
+  window = createWindow("Attar", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, W, H, SDL_WINDOW_RESIZABLE)
+  render = createRenderer(window, -1, 1);
+  var texture = createTexture(render, SDL_PIXELFORMAT_RGBA8888,
+                              SDL_TEXTUREACCESS_STREAMING, W, H);
+  discard setLogicalSize(render, W, H);
 
   var
     evt = sdl2.defaultEvent
@@ -71,10 +79,14 @@ proc gui =
       if evt.kind == QuitEvent:
         runGame = false
         break
+    for i in 0..W*H-1:
+      framebuf[i] = uint32 0xffffffff
 
-    render.setDrawColor 0,0,0,255
-    render.clear
-    render.present
+    clear(render);
+    updateTexture(texture, nil, addr framebuf, W * sizeof(uint32));
+    copy(render, texture, nil, nil);
+
+    present(render);
 
   destroy render
   destroy window
