@@ -44,3 +44,7 @@ proc display_clear*(machine: ref chip8) =
     echo fmt"display_clear"
   for pixel in machine.framebuf.mitems:
     pixel = 0
+
+proc draw*(machine: ref chip8, Vx: uint8, Vy: uint8, N: uint8) =
+  when not defined(release):
+    echo fmt"draw"
