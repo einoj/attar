@@ -8,6 +8,7 @@ type chip8* = object
   variables*: array[16, uint8]
   stack: seq[uint16]
   i: uint16
+  framebuf*: array[64*32, uint8]
 
 proc jump_to_addr*(machine: ref chip8, address: uint16) =
   echo fmt"jump to 0x{address:3x}"
@@ -30,3 +31,8 @@ proc return_subroutine*(machine: ref chip8) =
 proc set_pointer_reg*(machine: ref chip8, address: uint16) =
   machine.i = address
 
+proc display_clear*(machine: ref chip8) =
+  when not defined(release):
+    echo fmt"display_clear"
+  for pixel in machine.framebuf.mitems:
+    pixel = 0

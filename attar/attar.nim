@@ -26,7 +26,7 @@ proc alu(machine: ref chip8) =
       of 0:
         discard
       of 0x00E0:
-        echo fmt"display_clear"
+        display_clear(machine)
       of 0x00EE:
         return_subroutine(machine)
       of 0x1000..0x1fff:
@@ -62,7 +62,8 @@ proc gui =
     window: WindowPtr
     render: RendererPtr
     surface: SurfacePtr
-    framebuf: array[64*32, uint8]
+    
+  let machine: ref chip8 = new(chip8) 
 
   window = createWindow("Attar", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, W, H, SDL_WINDOW_RESIZABLE)
   render = createRenderer(window, -1, 1);
@@ -80,10 +81,10 @@ proc gui =
         runGame = false
         break
     for i in 0..W*H-1:
-      framebuf[i] = uint8 0x55
+      machine.framebuf[i] = uint8 0x55
 
     clear(render);
-    updateTexture(texture, nil, addr framebuf, W * sizeof(uint8));
+    updateTexture(texture, nil, addr machine.framebuf, W * sizeof(uint8));
     copy(render, texture, nil, nil);
 
     present(render);
