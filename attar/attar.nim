@@ -37,6 +37,8 @@ proc alu(machine: ref chip8) =
         call_subroutine(machine, lower12bits)
       of 0xa000..0xafff:
         set_pointer_reg(machine, lower12bits)
+      of 0xd000..0xdfff:
+        draw(machine, lower12bits)
       of 0xf000..0xffff:
         n.bitslice(0..7)
         case n:
@@ -80,8 +82,13 @@ proc gui =
       if evt.kind == QuitEvent:
         runGame = false
         break
-    for i in 0..W*H-1:
-      machine.framebuf[i] = uint8 0x55
+    for i in 10..18-1:
+      for j in 11..17-1:
+        machine.framebuf[i+W*j] = machine.framebuf[i+W*j] xor uint8 0x55
+
+    for i in 12..20-1:
+      for j in 13..19-1:
+        machine.framebuf[i+W*j] = machine.framebuf[i+W*j] xor uint8 0x55
 
     clear(render);
     updateTexture(texture, nil, addr machine.framebuf, W * sizeof(uint8));

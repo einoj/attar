@@ -45,6 +45,12 @@ proc display_clear*(machine: ref chip8) =
   for pixel in machine.framebuf.mitems:
     pixel = 0
 
-proc draw*(machine: ref chip8, Vx: uint8, Vy: uint8, N: uint8) =
+proc draw*(machine: ref chip8, lower: uint16) =
+  var Vx = lower
+  var Vy = lower
+  var N = lower
+  Vx.bitslice(8..11)
+  Vy.bitslice(4..7)
+  N.bitslice(0..3)
   when not defined(release):
-    echo fmt"draw"
+    echo fmt"draw {N} pixels from {Vx},{Vy}"
