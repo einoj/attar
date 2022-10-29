@@ -1,5 +1,5 @@
 type chip8* = object
-  ram*: array[4096, uint16]
+  ram*: array[4096, uint8]
   pc*: uint16
   variables*: array[16, uint8]
   stack*: seq[uint16]

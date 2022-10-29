@@ -1,13 +1,13 @@
 # Functions for running opcodes
 import std/strformat
 import std/bitops
-import video
 import machinedef
 
 proc jump_to_addr*(machine: ref chip8, address: uint16) =
   when not defined(release):
     echo fmt"jump to 0x{address:3x}"
   machine.pc = address
+  echo fmt"RAM at PC = {machine.ram[machine.pc]}"
 
 proc set_variable*(machine: ref chip8, lower: uint16) =
   var variable = lower
@@ -19,14 +19,15 @@ proc set_variable*(machine: ref chip8, lower: uint16) =
 
 proc call_subroutine*(machine: ref chip8, address: uint16) =
   when not defined(release):
-    echo fmt"return_subroutine"
+    echo fmt"call subroutine"
   machine.stack.add(machine.pc)
   jump_to_addr(machine, address)
 
 proc return_subroutine*(machine: ref chip8) =
-  when not defined(release):
-    echo fmt"return_subroutine"
   machine.pc =  machine.stack.pop
+  when not defined(release):
+    echo "return_subroutine"
+    echo fmt"pc set to {machine.pc}"
 
 proc set_pointer_reg*(machine: ref chip8, address: uint16) =
   when not defined(release):
@@ -53,4 +54,3 @@ proc draw*(machine: ref chip8, lower: uint16) =
   for i in Vx..Vx+width-1:
     for j in Vy..Vy+N-1:
       machine.framebuf[i+W*j] = machine.framebuf[i+W*j] xor uint8 0x55
-  updategui(machine)
