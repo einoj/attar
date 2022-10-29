@@ -21,14 +21,6 @@ proc initgui* =
   discard setLogicalSize(render, W, H);
 
 proc updategui*(machine: ref chip8) =
-  var
-    evt = sdl2.defaultEvent
-
-  while pollEvent(evt):
-    if evt.kind == QuitEvent:
-      runGUI = false
-      break
-
   clear(render);
   updateTexture(texture, nil, addr machine.framebuf, W * sizeof(uint8));
   copy(render, texture, nil, nil);
@@ -38,3 +30,14 @@ proc updategui*(machine: ref chip8) =
 proc destroygui* =
   destroy render
   destroy window
+
+proc quitevent*(): bool =
+  var
+    evt = sdl2.defaultEvent
+
+  while pollEvent(evt):
+    if evt.kind == QuitEvent:
+      destroygui()
+      return true
+  return false
+
