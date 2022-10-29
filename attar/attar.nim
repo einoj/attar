@@ -1,26 +1,30 @@
 import machinedef
 import streams
 import std/strformat
-import std/endians
 import std/bitops
 import opfuncs
 import video
 
 proc loadrom(romname: string, machine: ref chip8) =
   var stream = newFileStream(romname, fmRead)
-  var i: int = 0x200
+  var i: uint16 = 0x200
+  machine.pc = i
+  var echocnt: int = 0
   while not stream.atEnd:
-    var element = stream.readUint16
-    var bigend: uint16
-    bigEndian16(addr bigend, addr element)
-    machine.ram[i] = bigend
+    machine.ram[i] = stream.readUint8
+    when not defined(release):
+      stdout.write fmt"[0x{i:3x}]=0x{machine.ram[i]:2x} "
+      echocnt += 1
+      if echocnt == 8:
+        echocnt = 0
+        echo " "
     i += 1
   stream.close()
 
 proc alu(machine: ref chip8) =
-  while machine.pc<4096:
-    var n: uint16 = machine.ram[machine.pc]
-    var lower12bits: uint16 = machine.ram[machine.pc]
+  while machine.pc<0xfff:
+    var n: uint16 = bitops.bitor(machine.ram[machine.pc].int shl 8, machine.ram[machine.pc+1].int).uint16
+    var lower12bits: uint16 = n
     lower12bits.bitslice(0..11)
     case n:
       of 0:
@@ -48,7 +52,8 @@ proc alu(machine: ref chip8) =
             echo fmt"0xfX{n:x} not implemented"
       else:
         echo fmt"0x{n:4x} not implemented"
-    machine.pc += 1
+    machine.pc += 2
+    updategui(machine)
 
 let machine: ref chip8 = new(chip8) 
 loadrom("pong.rom", machine)
