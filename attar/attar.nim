@@ -54,11 +54,11 @@ proc alu(machine: ref chip8) =
         echo fmt"0x{n:4x} not implemented"
     machine.pc += 2
     updategui(machine)
+    if quitevent():
+      return
+  destroygui()
 
 let machine: ref chip8 = new(chip8) 
 loadrom("pong.rom", machine)
 initgui()
 alu(machine)
-while runGUI:
-  discard
-destroygui()
