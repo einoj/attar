@@ -1,14 +1,8 @@
 # Functions for running opcodes
 import std/strformat
 import std/bitops
-
-type chip8* = object
-  ram*: array[4096, uint16]
-  pc*: uint16
-  variables*: array[16, uint8]
-  stack: seq[uint16]
-  i: uint16
-  framebuf*: array[64*32, uint8]
+import video
+import machinedef
 
 proc jump_to_addr*(machine: ref chip8, address: uint16) =
   when not defined(release):
@@ -46,6 +40,8 @@ proc display_clear*(machine: ref chip8) =
     pixel = 0
 
 proc draw*(machine: ref chip8, lower: uint16) =
+  const W = 64
+  const width = 8
   var Vx = lower
   var Vy = lower
   var N = lower
@@ -54,3 +50,7 @@ proc draw*(machine: ref chip8, lower: uint16) =
   N.bitslice(0..3)
   when not defined(release):
     echo fmt"draw {N} pixels from {Vx},{Vy}"
+  for i in Vx..Vx+width-1:
+    for j in Vy..Vy+N-1:
+      machine.framebuf[i+W*j] = machine.framebuf[i+W*j] xor uint8 0x55
+  updategui(machine)

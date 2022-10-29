@@ -1,10 +1,10 @@
+import machinedef
 import streams
 import std/strformat
 import std/endians
 import std/bitops
 import opfuncs
-import sdl2
-import sdl2/ttf
+import video
 
 proc loadrom(romname: string, machine: ref chip8) =
   var stream = newFileStream(romname, fmRead)
@@ -50,53 +50,10 @@ proc alu(machine: ref chip8) =
         echo fmt"0x{n:4x} not implemented"
     machine.pc += 1
 
-#let machine: ref chip8 = new(chip8)
-#loadrom("pong.rom", machine)
-#alu(machine)
-
-proc gui =
-  discard sdl2.init(INIT_EVERYTHING)
-
-  const W: cint = 64
-  const H: cint = 32
-
-  var
-    window: WindowPtr
-    render: RendererPtr
-    surface: SurfacePtr
-    
-  let machine: ref chip8 = new(chip8) 
-
-  window = createWindow("Attar", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, W, H, SDL_WINDOW_RESIZABLE)
-  render = createRenderer(window, -1, 1);
-  var texture = createTexture(render, SDL_PIXELFORMAT_RGB332,
-                              SDL_TEXTUREACCESS_STREAMING, W, H);
-  discard setLogicalSize(render, W, H);
-
-  var
-    evt = sdl2.defaultEvent
-    runGame = true
-
-  while runGame:
-    while pollEvent(evt):
-      if evt.kind == QuitEvent:
-        runGame = false
-        break
-    for i in 10..18-1:
-      for j in 11..17-1:
-        machine.framebuf[i+W*j] = machine.framebuf[i+W*j] xor uint8 0x55
-
-    for i in 12..20-1:
-      for j in 13..19-1:
-        machine.framebuf[i+W*j] = machine.framebuf[i+W*j] xor uint8 0x55
-
-    clear(render);
-    updateTexture(texture, nil, addr machine.framebuf, W * sizeof(uint8));
-    copy(render, texture, nil, nil);
-
-    present(render);
-
-  destroy render
-  destroy window
-
-gui()
+let machine: ref chip8 = new(chip8) 
+loadrom("pong.rom", machine)
+initgui()
+alu(machine)
+while runGUI:
+  discard
+destroygui()
