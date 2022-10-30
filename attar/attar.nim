@@ -48,8 +48,11 @@ proc alu(machine: ref chip8) =
         case n:
           of 0x33:
             echo fmt "BCD"
+          of 0x65:
+            reg_load(machine, lower12bits)
           else:
             echo fmt"0xfX{n:x} not implemented"
+            break
       else:
         echo fmt"0x{n:4x} not implemented"
     machine.pc += 2

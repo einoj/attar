@@ -54,3 +54,12 @@ proc draw*(machine: ref chip8, lower: uint16) =
   for i in Vx..Vx+width-1:
     for j in Vy..Vy+N-1:
       machine.framebuf[i+W*j] = machine.framebuf[i+W*j] xor uint8 0x55
+
+proc reg_load*(machine: ref chip8, lower: uint16) =
+  var Vlast = lower
+  Vlast.bitslice(8..11)
+  when not defined(release):
+    echo fmt"reg_load V0 to V{Vlast} starting from I = 0x{machine.i:x}"
+  for i in 0..int(Vlast):
+      machine.variables[i] = machine.ram[machine.i]
+      machine.i += 1
