@@ -61,7 +61,7 @@ proc alu(machine: ref chip8) =
       return
   destroygui()
 
-let machine: ref chip8 = new(chip8) 
+let machine: ref chip8 = createChip8()
 loadrom("pong.rom", machine)
 initgui()
 alu(machine)
