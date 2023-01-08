@@ -5,6 +5,7 @@ type chip8* = object
   stack*: seq[uint16]
   i*: uint16
   framebuf*: array[64*32, uint8]
+  dt*: uint8
 
 const FONT: array[80, uint8] = [
   # font sprites

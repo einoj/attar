@@ -3,6 +3,13 @@ import std/strformat
 import std/bitops
 import machinedef
 
+proc set_delay_timer*(machine: ref, lower: uint16) =
+  let variable = lower shr 8
+  machine.dt = machine.variables[variable]
+  when not defined(release):
+    echo fmt"Delay Timer set to {machine.dt:x}"
+
+
 proc load_font_sprite*(machine: ref chip8, lower: uint16) =
   let variable = lower shr 8
   case machine.variables[variable]:
