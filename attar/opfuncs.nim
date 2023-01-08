@@ -3,6 +3,15 @@ import std/strformat
 import std/bitops
 import machinedef
 
+proc add_vx*(machine: ref chip8, lower: uint16) =
+  var variable = lower
+  variable.bitslice(8..11)
+  var value = uint8(lower)
+  when not defined(release):
+    echo fmt"Add {value:x} to variable 0x{variable:x}"
+  machine.variables[variable] += value
+  echo fmt"New variable 0x{machine.variables[variable]:x}"
+
 proc jump_to_addr*(machine: ref chip8, address: uint16) =
   when not defined(release):
     echo fmt"jump to 0x{address:3x}"
