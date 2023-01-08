@@ -59,7 +59,7 @@ proc alu(machine: ref chip8) =
           of 0x29:
             load_font_sprite(machine, lower12bits)
           of 0x33:
-            echo fmt "BCD"
+            store_bcd_rep(machine, lower12bits)
           of 0x65:
             reg_load(machine, lower12bits)
           else:
