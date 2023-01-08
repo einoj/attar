@@ -23,6 +23,7 @@ proc loadrom(romname: string, machine: ref chip8) =
 
 proc alu(machine: ref chip8) =
   while machine.pc<0x1000:
+    machine.tick()
     var n: uint16 = bitops.bitor(machine.ram[machine.pc].int shl 8, machine.ram[machine.pc+1].int).uint16
     var lower12bits: uint16 = n
     lower12bits.bitslice(0..11)

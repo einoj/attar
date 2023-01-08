@@ -1,3 +1,8 @@
+import std/strformat
+import times
+
+let timeout = 0.1/60 # 60 Hz
+
 type chip8* = object
   ram*: array[4096, uint8]
   pc*: uint16
@@ -6,6 +11,7 @@ type chip8* = object
   i*: uint16
   framebuf*: array[64*32, uint8]
   dt*: uint8
+  lasttick: float
 
 const FONT: array[80, uint8] = [
   # font sprites
@@ -26,6 +32,19 @@ const FONT: array[80, uint8] = [
   0xf0, 0x80, 0xf0, 0x80, 0xf0, # "E"
   0xf0, 0x80, 0xf0, 0x80, 0x80, # "F"
 ]
+
+proc setDT*(machine: ref chip8, value: uint8) =
+  machine.dt = value
+  machine.lasttick = cpuTime()
+
+proc tick*(machine: ref chip8) =
+  let now = cpuTime()
+  if machine.dt > 0:
+    if now - machine.lasttick > timeout:
+      machine.lasttick = now
+      machine.dt -= 1
+      when not defined(release):
+        echo fmt"Ticking timer {machine.dt}"
 
 func createChip8*(): ref chip8 =
 

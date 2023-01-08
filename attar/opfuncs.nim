@@ -16,13 +16,13 @@ proc save_delay_timer*(machine: ref, lower: uint16) =
   let variable = lower shr 8
   machine.variables[variable] = machine.dt
   when not defined(release):
-    echo fmt"Delay Timer saved to V[{variable}] {machine.variables[variable]:x}"
+    echo fmt"Delay Timer saved V[{variable}] = {machine.variables[variable]:x}"
 
 proc set_delay_timer*(machine: ref, lower: uint16) =
   let variable = lower shr 8
-  machine.dt = machine.variables[variable]
+  machine.setDT(machine.variables[variable])
   when not defined(release):
-    echo fmt"Delay Timer set to {machine.dt:x}"
+    echo fmt"Delay Timer set to 0x{machine.dt:x}"
 
 
 proc load_font_sprite*(machine: ref chip8, lower: uint16) =
