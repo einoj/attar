@@ -10,7 +10,7 @@ type chip8* = object
   stack*: seq[uint16]
   i*: uint16
   framebuf*: array[64*32, uint8]
-  dt*: uint8
+  dt: uint8
   lasttick: float
 
 const FONT: array[80, uint8] = [
@@ -33,9 +33,14 @@ const FONT: array[80, uint8] = [
   0xf0, 0x80, 0xf0, 0x80, 0x80, # "F"
 ]
 
+func getDT*(machine: ref chip8): uint8 =
+  return machine.dt
+
 proc setDT*(machine: ref chip8, value: uint8) =
   machine.dt = value
   machine.lasttick = cpuTime()
+  when not defined(release):
+    echo fmt"Delay Timer set to 0x{machine.dt:x}"
 
 proc tick*(machine: ref chip8) =
   let now = cpuTime()
