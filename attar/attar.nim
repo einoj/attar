@@ -39,6 +39,7 @@ proc alu(machine: ref chip8) =
         set_variable(machine, lower12bits)
       of 0x2000..0x2fff:
         call_subroutine(machine, lower12bits)
+        continue # continue so we do not increment the program counter
       of 0xa000..0xafff:
         set_pointer_reg(machine, lower12bits)
       of 0xd000..0xdfff:
