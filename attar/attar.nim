@@ -49,6 +49,8 @@ proc alu(machine: ref chip8) =
       of 0xf000..0xffff:
         n.bitslice(0..7)
         case n:
+          of 0x29:
+            load_font_sprite(machine, lower12bits)
           of 0x33:
             echo fmt "BCD"
           of 0x65:

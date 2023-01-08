@@ -3,6 +3,46 @@ import std/strformat
 import std/bitops
 import machinedef
 
+proc load_font_sprite*(machine: ref chip8, lower: uint16) =
+  let variable = lower shr 8
+  case machine.variables[variable]:
+    of 0x0:
+      machine.i = 0x0
+    of 0x1:
+      machine.i = 0x5
+    of 0x2:
+      machine.i = 0xa
+    of 0x3:
+      machine.i = 0xf
+    of 0x4:
+      machine.i = 0x14
+    of 0x5:
+      machine.i = 0x19
+    of 0x6:
+      machine.i = 0x1e
+    of 0x7:
+      machine.i = 0x23
+    of 0x8:
+      machine.i = 0x28
+    of 0x9:
+      machine.i = 0x2d
+    of 0xa:
+      machine.i = 0x32
+    of 0xb:
+      machine.i = 0x37
+    of 0xc:
+      machine.i = 0x3c
+    of 0xd:
+      machine.i = 0x41
+    of 0xe:
+      machine.i = 0x46
+    of 0xf:
+      machine.i = 0x4b
+    else:
+      echo "ERROR: digit {machine.variables[variable]} font not supported"
+  when not defined(release):
+    echo fmt"Set I = {machine.i:x}, address of font depicting {machine.variables[variable]:x}"
+
 proc add_vx*(machine: ref chip8, lower: uint16) =
   var variable = lower
   variable.bitslice(8..11)
