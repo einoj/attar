@@ -3,6 +3,32 @@ import std/strformat
 import std/bitops
 import machinedef
 
+proc store_bcd_rep*(machine: ref, lower: uint16) =
+  var j = lower shr 8
+  var hundreds: uint8 = 0
+  var tens: uint8 = 0
+  var ones: uint8 = 0
+
+  while j > 100:
+    echo fmt"100 j = {j}"
+    j -= 100
+    hundreds += 1
+  while j > 10:
+    echo fmt"10 j = {j}"
+    j -= 10
+    tens += 1
+  while j > 0:
+    echo fmt"1 j = {j}"
+    j -= 1
+    ones += 1
+
+  machine.ram[machine.i] = hundreds
+  machine.ram[machine.i+1] = tens
+  machine.ram[machine.i+2] = ones
+  when not defined(release):
+    echo fmt "Store BCD {hundreds} in I={machine.i}, {tens} in I={machine.i+1}, {ones} in I={machine.i+2}"
+
+
 proc skip_next_instr*(machine: ref, lower: uint16) =
   var variable = lower
   variable.bitslice(8..11)
