@@ -3,6 +3,12 @@ import std/strformat
 import std/bitops
 import machinedef
 
+proc save_delay_timer*(machine: ref, lower: uint16) =
+  let variable = lower shr 8
+  machine.variables[variable] = machine.dt
+  when not defined(release):
+    echo fmt"Delay Timer saved to V[{variable}] {machine.variables[variable]:x}"
+
 proc set_delay_timer*(machine: ref, lower: uint16) =
   let variable = lower shr 8
   machine.dt = machine.variables[variable]
