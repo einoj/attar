@@ -49,6 +49,8 @@ proc alu(machine: ref chip8) =
       of 0xf000..0xffff:
         n.bitslice(0..7)
         case n:
+          of 0x07:
+            save_delay_timer(machine, lower12bits)
           of 0x15:
             set_delay_timer(machine, lower12bits)
           of 0x29:
