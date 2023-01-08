@@ -40,6 +40,8 @@ proc alu(machine: ref chip8) =
       of 0x2000..0x2fff:
         call_subroutine(machine, lower12bits)
         continue # continue so we do not increment the program counter
+      of 0x3000..0x3fff:
+        skip_next_instr(machine, lower12bits)
       of 0x7000..0x7fff:
         add_vx(machine, lower12bits)
       of 0xa000..0xafff:
@@ -64,6 +66,7 @@ proc alu(machine: ref chip8) =
             break
       else:
         echo fmt"0x{n:4x} not implemented"
+        break
     machine.pc += 2
     updategui(machine)
     if quitevent():

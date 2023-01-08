@@ -3,6 +3,15 @@ import std/strformat
 import std/bitops
 import machinedef
 
+proc skip_next_instr*(machine: ref, lower: uint16) =
+  var variable = lower
+  variable.bitslice(8..11)
+  var value = uint8(lower)
+  if machine.variables[variable] == value:
+    machine.pc += 2
+    when not defined(release):
+      echo "Skipping next instruction"
+
 proc save_delay_timer*(machine: ref, lower: uint16) =
   let variable = lower shr 8
   machine.variables[variable] = machine.dt
