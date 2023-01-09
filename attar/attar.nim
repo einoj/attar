@@ -4,6 +4,7 @@ import std/strformat
 import std/bitops
 import opfuncs
 import video
+import os
 
 proc loadrom(romname: string, machine: ref chip8) =
   var stream = newFileStream(romname, fmRead)
@@ -49,6 +50,7 @@ proc alu(machine: ref chip8) =
         set_pointer_reg(machine, lower12bits)
       of 0xd000..0xdfff:
         draw(machine, lower12bits)
+        updategui(machine)
       of 0xf000..0xffff:
         n.bitslice(0..7)
         case n:
