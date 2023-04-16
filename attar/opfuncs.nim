@@ -155,7 +155,7 @@ proc draw*(machine: ref chip8, lower: uint16) =
   when not defined(release):
     echo fmt"draw {N} sprites starting from {xcoordinate},{ycoordinate}"
     for i in machine.i..machine.i+N-1:
-      echo fmt"Drawing 0b{machine.ram[i]:b}"
+      echo fmt"Drawing 0b{machine.ram[i]:08b}"
   for row in ycoordinate..ycoordinate+4:
     idx = uint16(row)
     if idx > 31:
@@ -169,10 +169,7 @@ proc draw*(machine: ref chip8, lower: uint16) =
           jdx -= 63
       pixel = (sprite shr (8-pixel_index)) and 1
       pixel_index += 1
-      echo fmt" i = {row} j = {col} " 
-      echo fmt" idx = {idx} jdx = {jdx} " 
       framebuf_i = idx*screenW+jdx
-      echo fmt"idx*screenW+jdx = {framebuf_i}" 
       if pixel == 1:
         machine.framebuf[framebuf_i] = machine.framebuf[framebuf_i] xor (uint8 0xff)
       else:
