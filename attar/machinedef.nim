@@ -12,6 +12,7 @@ type chip8* = object
   framebuf*: array[64*32, uint8]
   dt: uint8
   lasttick: float
+  jmpflag*: bool
 
 const FONT*: array[80, uint8] = [
   # font sprites

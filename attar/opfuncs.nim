@@ -101,7 +101,9 @@ proc jump_to_addr*(machine: ref chip8, address: uint16) =
   when not defined(release):
     echo fmt"jump to 0x{address:3x}"
   machine.pc = address
-  echo fmt"RAM at PC = {machine.ram[machine.pc]}"
+  machine.jmpflag = true
+  echo fmt"RAM at PC({machine.pc:x}) = {bitops.bitor(machine.ram[machine.pc].int shl 8, machine.ram[machine.pc+1].int).uint16:x}"
+
 
 proc set_variable*(machine: ref chip8, lower: uint16) =
   var variable = lower
