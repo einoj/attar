@@ -135,19 +135,48 @@ proc display_clear*(machine: ref chip8) =
     pixel = 0
 
 proc draw*(machine: ref chip8, lower: uint16) =
-  const W = 64
+  const screenW = 64
   const width = 8
   var Vx = lower
   var Vy = lower
-  var N = lower
+  var N:uint16 = lower
   Vx.bitslice(8..11)
   Vy.bitslice(4..7)
+  var sprite: uint8  = 0
+  var sprite_index: uint16 = 0
+  var pixel: uint8 = 0
+  var pixel_index: uint8 = 7
+  let xcoordinate: uint16 = machine.variables[Vx]
+  let ycoordinate: uint16 = machine.variables[Vy]
+  var idx: uint16 = 0 
+  var jdx: uint16 = 0
+  var framebuf_i: uint16 = 0
   N.bitslice(0..3)
   when not defined(release):
-    echo fmt"draw {N} pixels from {Vx},{Vy}"
-  for i in Vx..Vx+width-1:
-    for j in Vy..Vy+N-1:
-      machine.framebuf[i+W*j] = machine.framebuf[i+W*j] xor uint8 0x55
+    echo fmt"draw {N} sprites starting from {xcoordinate},{ycoordinate}"
+    for i in machine.i..machine.i+N-1:
+      echo fmt"Drawing 0b{machine.ram[i]:b}"
+  for row in ycoordinate..ycoordinate+4:
+    idx = uint16(row)
+    if idx > 31:
+        idx -= 31
+    sprite = machine.ram[machine.i+sprite_index]
+    sprite_index += 1
+    pixel_index = 0
+    for col in xcoordinate..xcoordinate+7:
+      jdx = uint16(col)
+      if jdx > 63:
+          jdx -= 63
+      pixel = (sprite shr (8-pixel_index)) and 1
+      pixel_index += 1
+      echo fmt" i = {row} j = {col} " 
+      echo fmt" idx = {idx} jdx = {jdx} " 
+      framebuf_i = idx*screenW+jdx
+      echo fmt"idx*screenW+jdx = {framebuf_i}" 
+      if pixel == 1:
+        machine.framebuf[framebuf_i] = machine.framebuf[framebuf_i] xor (uint8 0xff)
+      else:
+        machine.framebuf[framebuf_i] = machine.framebuf[framebuf_i] xor (uint8 0x00)
 
 proc reg_load*(machine: ref chip8, lower: uint16) =
   var Vlast = lower

@@ -4,7 +4,7 @@ import times
 let timeout = 0.1/60 # 60 Hz
 
 type chip8* = object
-  ram*: array[4096, uint8]
+  ram*: array[2048, uint8]
   pc*: uint16
   variables*: array[16, uint8]
   stack*: seq[uint16]
@@ -13,7 +13,7 @@ type chip8* = object
   dt: uint8
   lasttick: float
 
-const FONT: array[80, uint8] = [
+const FONT*: array[80, uint8] = [
   # font sprites
   0xf0'u8, 0x90, 0x90, 0x90, 0xf0, # "0"
   0x20, 0x60, 0x20, 0x20, 0x70, # "1"
