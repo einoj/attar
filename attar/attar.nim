@@ -26,6 +26,7 @@ proc alu(machine: ref chip8) =
   while machine.pc<0x1000:
     machine.tick()
     var n: uint16 = bitops.bitor(machine.ram[machine.pc].int shl 8, machine.ram[machine.pc+1].int).uint16
+    echo fmt"instruction = {n:x}" 
     var lower12bits: uint16 = n
     lower12bits.bitslice(0..11)
     case n:
@@ -70,7 +71,10 @@ proc alu(machine: ref chip8) =
       else:
         echo fmt"0x{n:4x} not implemented"
         break
-    machine.pc += 2
+    if not machine.jmpflag:
+      machine.pc += 2
+    else:
+      machine.jmpflag = false
     updategui(machine)
     if quitevent():
       return
