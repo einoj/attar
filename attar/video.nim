@@ -13,7 +13,7 @@ const H: cint = 32
 proc initgui* =
   discard sdl2.init(INIT_EVERYTHING)
 
-  let scale: cint = 4
+  let scale: cint = 15
   window = createWindow("Attar", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, W*scale, H*scale, SDL_WINDOW_RESIZABLE)
   render = createRenderer(window, -1, 1);
   texture = createTexture(render, SDL_PIXELFORMAT_RGB332,
