@@ -52,6 +52,9 @@ proc alu(machine: ref chip8) =
       of 0xd000..0xdfff:
         draw(machine, lower12bits)
         updategui(machine)
+      of 0xc000..0xcfff:
+        random(machine, lower12bits)
+        updategui(machine)
       of 0xf000..0xffff:
         n.bitslice(0..7)
         case n:

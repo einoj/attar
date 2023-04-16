@@ -1,6 +1,7 @@
 # Functions for running opcodes
 import std/strformat
 import std/bitops
+import std/random
 import machinedef
 
 proc store_bcd_rep*(machine: ref, lower: uint16) =
@@ -185,3 +186,14 @@ proc reg_load*(machine: ref chip8, lower: uint16) =
   for i in 0..int(Vlast):
       machine.variables[i] = machine.ram[machine.i]
       machine.i += 1
+
+proc random*(machine: ref chip8, lower: uint16) =
+  var Vx = lower
+  var k = lower
+  Vx.bitslice(8..11)
+  k.bitslice(0..7)
+  randomize()
+  let num = rand(255)
+  let result = bitand(int(k), num)
+  when not defined(release):
+    echo fmt"Random: Store bitand({k}, {num}) = {result} in V{Vx} "
