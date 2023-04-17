@@ -13,6 +13,7 @@ type chip8* = object
   dt: uint8
   lasttick: float
   jmpflag*: bool
+  input*: array[16, uint8]
 
 const FONT*: array[80, uint8] = [
   # font sprites

@@ -197,3 +197,11 @@ proc random*(machine: ref chip8, lower: uint16) =
   let result = bitand(int(k), num)
   when not defined(release):
     echo fmt"Random: Store bitand({k}, {num}) = {result} in V{Vx} "
+
+proc skip_not_pressed*(machine: ref chip8, lower: uint16) =
+  #TODO IMPLEMENT ME
+  return
+
+proc skip_pressed*(machine: ref chip8, lower: uint16) =
+  #TODO IMPLEMENT ME
+  return

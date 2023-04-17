@@ -52,6 +52,13 @@ proc alu(machine: ref chip8) =
       of 0xd000..0xdfff:
         draw(machine, lower12bits)
         updategui(machine)
+      of 0xe000..0xefa1:
+        n.bitslice(0..7)
+        case n:
+          of 0xa1:
+            skip_not_pressed(machine, lower12bits)
+          of 0x9e:
+            skip_pressed(machine, lower12bits)
       of 0xc000..0xcfff:
         random(machine, lower12bits)
         updategui(machine)
