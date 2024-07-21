@@ -124,6 +124,10 @@ proc add_vx_vy*(machine: ref chip8, lower: uint16) =
   when not defined(release):
     echo fmt"set V{x:x} = V{x:x} + V{y:x}"
   machine.variables[x] = machine.variables[x] + machine.variables[y]
+  machine.variables[0xf] = 0
+  if machine.variables[x] < machine.variables[y]:
+    echo fmt"V{x:x} overflow"
+    machine.variables[0xf] = 1
 
 proc set_vx_vy*(machine: ref chip8, lower: uint16) =
   var x = lower
@@ -141,6 +145,11 @@ proc sub_vx_vy*(machine: ref chip8, lower: uint16) =
   y.bitslice(4..7)
   when not defined(release):
     echo fmt"set V{x:x} = V{x:x} - V{y:x}"
+  machine.variables[0xf] = 1
+  if machine.variables[y] > machine.variables[x]:
+    machine.variables[0xf] = 0
+    when not defined(release):
+      echo fmt"V{x:x} underflow, VF set to 0"
   machine.variables[x] = machine.variables[x] - machine.variables[y]
 
 proc jump_to_addr*(machine: ref chip8, address: uint16) =

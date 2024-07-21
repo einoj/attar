@@ -12,3 +12,5 @@ cd attar
 nim c attar
 ./attar
 ```
+# run tests
+testament run tests/category/*.nim
