@@ -29,15 +29,24 @@ proc store_bcd_rep*(machine: ref, lower: uint16) =
   when not defined(release):
     echo fmt "Store BCD {hundreds} in I={machine.i}, {tens} in I={machine.i+1}, {ones} in I={machine.i+2}"
 
+proc skip_next_instr(machine: ref) =
+    machine.pc += 2
+    when not defined(release):
+      echo "Skipping next instruction"
 
-proc skip_next_instr*(machine: ref, lower: uint16) =
+proc skip_next_instr_equal*(machine: ref, lower: uint16) =
   var variable = lower
   variable.bitslice(8..11)
   var value = uint8(lower)
   if machine.variables[variable] == value:
-    machine.pc += 2
-    when not defined(release):
-      echo "Skipping next instruction"
+      skip_next_instr(machine)
+
+proc skip_next_instr_not_equal*(machine: ref, lower: uint16) =
+  var variable = lower
+  variable.bitslice(8..11)
+  var value = uint8(lower)
+  if machine.variables[variable] != value:
+      skip_next_instr(machine)
 
 proc save_delay_timer*(machine: ref, lower: uint16) =
   let variable = lower shr 8

@@ -44,7 +44,9 @@ proc alu(machine: ref chip8) =
         call_subroutine(machine, lower12bits)
         continue # continue so we do not increment the program counter
       of 0x3000..0x3fff:
-        skip_next_instr(machine, lower12bits)
+        skip_next_instr_equal(machine, lower12bits)
+      of 0x4000..0x4fff:
+        skip_next_instr_not_equal(machine, lower12bits)
       of 0x7000..0x7fff:
         add_vx(machine, lower12bits)
       of 0x8000..0x8fff:
