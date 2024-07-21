@@ -53,7 +53,7 @@ proc alu(machine: ref chip8) =
         n.bitslice(0..3)
         case n:
           of 0x0:
-            echo fmt"0x8xy{n:x} not implemented"
+            set_vx_vy(machine, lower12bits)
           of 0x1:
             echo fmt"0x8xy{n:x} not implemented"
           of 0x2:
@@ -63,7 +63,7 @@ proc alu(machine: ref chip8) =
           of 0x4:
             add_vx_vy(machine, lower12bits)
           of 0x5:
-            echo fmt"0x8xy{n:x} not implemented"
+            sub_vx_vy(machine, lower12bits)
           of 0x6:
             echo fmt"0x8xy{n:x} not implemented"
           of 0x7:
