@@ -98,6 +98,24 @@ proc add_vx*(machine: ref chip8, lower: uint16) =
   machine.variables[variable] += value
   echo fmt"New variable 0x{machine.variables[variable]:x}"
 
+proc and_vx_vy*(machine: ref chip8, lower: uint16) =
+  var x = lower
+  x.bitslice(8..11)
+  var y = lower
+  y.bitslice(4..7)
+  when not defined(release):
+    echo fmt"set V{x:x} = V{x:x} and V{y:x}"
+  machine.variables[x] = bitand(machine.variables[x], machine.variables[y])
+
+proc add_vx_vy*(machine: ref chip8, lower: uint16) =
+  var x = lower
+  x.bitslice(8..11)
+  var y = lower
+  y.bitslice(4..7)
+  when not defined(release):
+    echo fmt"set V{x:x} = V{x:x} + V{y:x}"
+  machine.variables[x] = machine.variables[x] + machine.variables[y]
+
 proc jump_to_addr*(machine: ref chip8, address: uint16) =
   when not defined(release):
     echo fmt"jump to 0x{address:3x}"

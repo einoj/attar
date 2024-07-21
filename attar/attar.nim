@@ -47,6 +47,29 @@ proc alu(machine: ref chip8) =
         skip_next_instr(machine, lower12bits)
       of 0x7000..0x7fff:
         add_vx(machine, lower12bits)
+      of 0x8000..0x8fff:
+        n.bitslice(0..3)
+        case n:
+          of 0x0:
+            echo fmt"0x8xy{n:x} not implemented"
+          of 0x1:
+            echo fmt"0x8xy{n:x} not implemented"
+          of 0x2:
+            and_vx_vy(machine, lower12bits)
+          of 0x3:
+            echo fmt"0x8xy{n:x} not implemented"
+          of 0x4:
+            add_vx_vy(machine, lower12bits)
+          of 0x5:
+            echo fmt"0x8xy{n:x} not implemented"
+          of 0x6:
+            echo fmt"0x8xy{n:x} not implemented"
+          of 0x7:
+            echo fmt"0x8xy{n:x} not implemented"
+          of 0xE:
+            echo fmt"0x8xy{n:x} not implemented"
+          else:
+            echo fmt"0x8xy{n:x} not implemented"
       of 0xa000..0xafff:
         set_pointer_reg(machine, lower12bits)
       of 0xd000..0xdfff:
@@ -59,6 +82,8 @@ proc alu(machine: ref chip8) =
             skip_not_pressed(machine, lower12bits)
           of 0x9e:
             skip_pressed(machine, lower12bits)
+          else:
+            echo fmt"0xefa1 0x{n:4x} not implemented"
       of 0xc000..0xcfff:
         random(machine, lower12bits)
         updategui(machine)
