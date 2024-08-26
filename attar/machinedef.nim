@@ -11,6 +11,7 @@ type chip8* = object
   i*: uint16
   framebuf*: array[64*32, uint8]
   dt: uint8
+  st*: uint8
   lasttick: float
   jmpflag*: bool
   input*: array[16, uint8]
@@ -46,12 +47,17 @@ proc setDT*(machine: ref chip8, value: uint8) =
 
 proc tick*(machine: ref chip8) =
   let now = cpuTime()
-  if machine.dt > 0:
-    if now - machine.lasttick > timeout:
-      machine.lasttick = now
+  if now - machine.lasttick > timeout:
+    machine.lasttick = now
+    if machine.dt > 0:
       machine.dt -= 1
       when not defined(release):
         echo fmt"Ticking timer {machine.dt}"
+    if machine.st > 0:
+      machine.st -= 1
+      # TODO add beep sound
+      when not defined(release):
+        echo fmt"Ticking timer {machine.st}"
 
 func createChip8*(): ref chip8 =
 

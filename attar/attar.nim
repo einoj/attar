@@ -102,6 +102,8 @@ proc alu(machine: ref chip8) =
             store_bcd_rep(machine, lower12bits)
           of 0x65:
             reg_load(machine, lower12bits)
+          of 0x18:
+            set_st(machine, lower12bits)
           else:
             echo fmt"0xfX{n:x} not implemented"
             break
