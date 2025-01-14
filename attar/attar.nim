@@ -76,6 +76,8 @@ proc alu(machine: ref chip8) =
             echo fmt"0x8xy{n:x} not implemented"
           else:
             echo fmt"0x8xy{n:x} not implemented"
+      of 0x9000..0x9fff:
+        skip_next_instr_if_vx_not_equal_vy(machine, lower12bits)
       of 0xa000..0xafff:
         set_pointer_reg(machine, lower12bits)
       of 0xd000..0xdfff:
