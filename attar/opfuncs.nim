@@ -213,6 +213,14 @@ proc draw*(machine: ref chip8, lower: uint16) =
       else:
         machine.framebuf[framebuf_i] = machine.framebuf[framebuf_i] xor (uint8 0x00)
 
+proc increment_mem_ptr*(machine: ref chip8, lower: uint16) =
+  var Vx = lower
+  Vx.bitslice(8..11)
+  when not defined(release):
+    echo fmt"Adding V{Vx} = {machine.variables[Vx]} to I"
+  machine.i += machine.variables[Vx]
+    
+
 proc reg_load*(machine: ref chip8, lower: uint16) =
   var Vlast = lower
   Vlast.bitslice(8..11)

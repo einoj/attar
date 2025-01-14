@@ -110,6 +110,8 @@ proc alu(machine: ref chip8) =
             set_st(machine, lower12bits)
           of 0x55:
             reg_dump(machine, lower12bits)
+          of 0x1e:
+            increment_mem_ptr(machine, lower12bits)
           else:
             echo fmt"0xfX{firstbyte:x} not implemented"
             break
