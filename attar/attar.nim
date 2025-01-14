@@ -28,6 +28,8 @@ proc alu(machine: ref chip8) =
     var n: uint16 = bitops.bitor(machine.ram[machine.pc].int shl 8, machine.ram[machine.pc+1].int).uint16
     echo fmt"instruction = {n:x}" 
     var lower12bits: uint16 = n
+    var firstbyte: uint16 = n
+    firstbyte.bitslice(0..7)
     lower12bits.bitslice(0..11)
     case n:
       of 0:
@@ -78,8 +80,7 @@ proc alu(machine: ref chip8) =
         draw(machine, lower12bits)
         updategui(machine)
       of 0xe000..0xefa1:
-        n.bitslice(0..7)
-        case n:
+        case firstbyte:
           of 0xa1:
             skip_not_pressed(machine, lower12bits)
           of 0x9e:
@@ -90,8 +91,7 @@ proc alu(machine: ref chip8) =
         random(machine, lower12bits)
         updategui(machine)
       of 0xf000..0xffff:
-        n.bitslice(0..7)
-        case n:
+        case firstbyte:
           of 0x07:
             save_delay_timer(machine, lower12bits)
           of 0x15:
