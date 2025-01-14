@@ -223,6 +223,16 @@ proc reg_load*(machine: ref chip8, lower: uint16) =
       machine.variables[i] = machine.ram[machine_i]
       machine_i += 1
 
+proc reg_dump*(machine: ref chip8, lower: uint16) =
+  var Vlast = lower
+  Vlast.bitslice(8..11)
+  when not defined(release):
+    echo fmt"reg_dump from V0 to V{Vlast} starting from I = 0x{machine.i:x}"
+  var machine_i = machine.i
+  for i in 0..int(Vlast):
+      machine.ram[machine_i] = machine.variables[i]
+      machine_i += 1
+
 proc random*(machine: ref chip8, lower: uint16) =
   var Vx = lower
   var k = lower

@@ -108,8 +108,10 @@ proc alu(machine: ref chip8) =
             reg_load(machine, lower12bits)
           of 0x18:
             set_st(machine, lower12bits)
+          of 0x55:
+            reg_dump(machine, lower12bits)
           else:
-            echo fmt"0xfX{n:x} not implemented"
+            echo fmt"0xfX{firstbyte:x} not implemented"
             break
       else:
         echo fmt"0x{n:4x} not implemented"
