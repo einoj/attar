@@ -49,6 +49,8 @@ proc alu(machine: ref chip8) =
         skip_next_instr_equal(machine, lower12bits)
       of 0x4000..0x4fff:
         skip_next_instr_not_equal(machine, lower12bits)
+      of 0x5000..0x5fff:
+        skip_next_instr_if_vx_equal_vy(machine, lower12bits)
       of 0x7000..0x7fff:
         add_vx(machine, lower12bits)
       of 0x8000..0x8fff:

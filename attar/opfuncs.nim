@@ -39,6 +39,14 @@ proc skip_next_instr_equal*(machine: ref, lower: uint16) =
   if machine.variables[variable] == value:
       skip_next_instr(machine)
 
+proc skip_next_instr_if_vx_equal_vy*(machine: ref, lower: uint16) =
+  var vx = lower
+  var vy = lower
+  vx.bitslice(8..11)
+  vy.bitslice(4..7)
+  if machine.variables[vx] == machine.variables[vy]:
+      skip_next_instr(machine)
+
 proc skip_next_instr_not_equal*(machine: ref, lower: uint16) =
   var variable = lower
   variable.bitslice(8..11)
