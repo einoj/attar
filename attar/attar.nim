@@ -120,6 +120,6 @@ proc alu(machine: ref chip8) =
   destroygui()
 
 let machine: ref chip8 = createChip8()
-loadrom("pong.rom", machine)
+loadrom(paramStr(1), machine)
 initgui()
 alu(machine)
