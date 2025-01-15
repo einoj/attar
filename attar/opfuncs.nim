@@ -3,6 +3,7 @@ import std/strformat
 import std/bitops
 import std/random
 import machinedef
+import sdl2
 
 proc store_bcd_rep*(machine: ref, lower: uint16) =
   var j = lower shr 8
@@ -88,7 +89,8 @@ proc add_vx*(machine: ref chip8, lower: uint16) =
   when not defined(release):
     echo fmt"Add {value:x} to variable 0x{variable:x}"
   machine.variables[variable] += value
-  echo fmt"New variable 0x{machine.variables[variable]:x}"
+  when not defined(release):
+    echo fmt"New variable 0x{machine.variables[variable]:x}"
 
 proc and_vx_vy*(machine: ref chip8, lower: uint16) =
   var x = lower
@@ -109,7 +111,8 @@ proc add_vx_vy*(machine: ref chip8, lower: uint16) =
   machine.variables[x] = machine.variables[x] + machine.variables[y]
   machine.variables[0xf] = 0
   if machine.variables[x] < machine.variables[y]:
-    echo fmt"V{x:x} overflow"
+    when not defined(release):
+        echo fmt"V{x:x} overflow"
     machine.variables[0xf] = 1
 
 proc set_vx_vy*(machine: ref chip8, lower: uint16) =
@@ -138,9 +141,9 @@ proc sub_vx_vy*(machine: ref chip8, lower: uint16) =
 proc jump_to_addr*(machine: ref chip8, address: uint16) =
   when not defined(release):
     echo fmt"jump to 0x{address:3x}"
+    echo fmt"RAM at PC({machine.pc:x}) = {bitops.bitor(machine.ram[machine.pc].int shl 8, machine.ram[machine.pc+1].int).uint16:x}"
   machine.pc = address
   machine.jmpflag = true
-  echo fmt"RAM at PC({machine.pc:x}) = {bitops.bitor(machine.ram[machine.pc].int shl 8, machine.ram[machine.pc+1].int).uint16:x}"
 
 
 proc set_variable*(machine: ref chip8, lower: uint16) =
@@ -258,9 +261,117 @@ proc set_st*(machine: ref chip8, lower: uint16) =
   machine.st = uint8(x)
 
 proc skip_not_pressed*(machine: ref chip8, lower: uint16) =
-  #TODO IMPLEMENT ME
-  return
+  let state = getKeyboardState(nil)
+  var Vx = lower
+  Vx.bitslice(8..11)
+  var key = machine.variables[Vx]
+  key.bitslice(0..3)
+  case key:
+    of 0x0:
+      if state[SDL_SCANCODE_1.int] == 0:
+        skip_next_instr(machine)
+    of 0x1:
+      if state[SDL_SCANCODE_2.int] == 0:
+        skip_next_instr(machine)
+    of 0x2:
+      if state[SDL_SCANCODE_3.int] == 0:
+        skip_next_instr(machine)
+    of 0x3:
+      if state[SDL_SCANCODE_4.int] == 0:
+        skip_next_instr(machine)
+    of 0x4:
+      if state[SDL_SCANCODE_Q.int] == 0:
+        skip_next_instr(machine)
+    of 0x5:
+      if state[SDL_SCANCODE_W.int] == 0:
+        skip_next_instr(machine)
+    of 0x6:
+      if state[SDL_SCANCODE_E.int] == 0:
+        skip_next_instr(machine)
+    of 0x7:
+      if state[SDL_SCANCODE_R.int] == 0:
+        skip_next_instr(machine)
+    of 0x8:
+      if state[SDL_SCANCODE_A.int] == 0:
+        skip_next_instr(machine)
+    of 0x9:
+      if state[SDL_SCANCODE_S.int] == 0:
+        skip_next_instr(machine)
+    of 0xa:
+      if state[SDL_SCANCODE_D.int] == 0:
+        skip_next_instr(machine)
+    of 0xb:
+      if state[SDL_SCANCODE_F.int] == 0:
+        skip_next_instr(machine)
+    of 0xc:
+      if state[SDL_SCANCODE_Z.int] == 0:
+        skip_next_instr(machine)
+    of 0xd:
+      if state[SDL_SCANCODE_X.int] == 0:
+        skip_next_instr(machine)
+    of 0xe:
+      if state[SDL_SCANCODE_C.int] == 0:
+        skip_next_instr(machine)
+    of 0xf:
+      if state[SDL_SCANCODE_V.int] == 0:
+        skip_next_instr(machine)
+    else:
+        echo fmt"Key 0x{key:x} not implemented"
 
 proc skip_pressed*(machine: ref chip8, lower: uint16) =
-  #TODO IMPLEMENT ME
-  return
+  let state = getKeyboardState(nil)
+  var Vx = lower
+  Vx.bitslice(8..11)
+  var key = machine.variables[Vx]
+  key.bitslice(0..3)
+  case key:
+    of 0x0:
+      if state[SDL_SCANCODE_1.int] != 0:
+        skip_next_instr(machine)
+    of 0x1:
+      if state[SDL_SCANCODE_2.int] != 0:
+        skip_next_instr(machine)
+    of 0x2:
+      if state[SDL_SCANCODE_3.int] != 0:
+        skip_next_instr(machine)
+    of 0x3:
+      if state[SDL_SCANCODE_4.int] != 0:
+        skip_next_instr(machine)
+    of 0x4:
+      if state[SDL_SCANCODE_Q.int] != 0:
+        skip_next_instr(machine)
+    of 0x5:
+      if state[SDL_SCANCODE_W.int] != 0:
+        skip_next_instr(machine)
+    of 0x6:
+      if state[SDL_SCANCODE_E.int] != 0:
+        skip_next_instr(machine)
+    of 0x7:
+      if state[SDL_SCANCODE_R.int] != 0:
+        skip_next_instr(machine)
+    of 0x8:
+      if state[SDL_SCANCODE_A.int] != 0:
+        skip_next_instr(machine)
+    of 0x9:
+      if state[SDL_SCANCODE_S.int] != 0:
+        skip_next_instr(machine)
+    of 0xa:
+      if state[SDL_SCANCODE_D.int] != 0:
+        skip_next_instr(machine)
+    of 0xb:
+      if state[SDL_SCANCODE_F.int] != 0:
+        skip_next_instr(machine)
+    of 0xc:
+      if state[SDL_SCANCODE_Z.int] != 0:
+        skip_next_instr(machine)
+    of 0xd:
+      if state[SDL_SCANCODE_X.int] != 0:
+        skip_next_instr(machine)
+    of 0xe:
+      if state[SDL_SCANCODE_C.int] != 0:
+        skip_next_instr(machine)
+    of 0xf:
+      if state[SDL_SCANCODE_V.int] != 0:
+        skip_next_instr(machine)
+    else:
+        echo fmt"Key 0x{key:x} not implemented"

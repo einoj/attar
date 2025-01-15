@@ -26,7 +26,8 @@ proc alu(machine: ref chip8) =
   while machine.pc<0x1000:
     machine.tick()
     var n: uint16 = bitops.bitor(machine.ram[machine.pc].int shl 8, machine.ram[machine.pc+1].int).uint16
-    echo fmt"instruction = {n:x}" 
+    when not defined(release):
+        echo fmt"instruction = {n:x}" 
     var lower12bits: uint16 = n
     var firstbyte: uint16 = n
     firstbyte.bitslice(0..7)
@@ -90,7 +91,8 @@ proc alu(machine: ref chip8) =
           of 0x9e:
             skip_pressed(machine, lower12bits)
           else:
-            echo fmt"0xefa1 0x{n:4x} not implemented"
+            echo fmt"0x{n:4x} not implemented"
+            break
       of 0xc000..0xcfff:
         random(machine, lower12bits)
         updategui(machine)
