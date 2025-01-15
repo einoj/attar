@@ -6,15 +6,17 @@ import machinedef
 import sdl2
 
 proc store_bcd_rep*(machine: ref, lower: uint16) =
-  var j = lower shr 8
+  var Vx = lower
+  Vx.bitslice(8..11)
   var hundreds: uint8 = 0
   var tens: uint8 = 0
   var ones: uint8 = 0
+  var j = machine.variables[Vx]
 
-  while j > 100:
+  while j >= 100:
     j -= 100
     hundreds += 1
-  while j > 10:
+  while j >= 10:
     j -= 10
     tens += 1
   while j > 0:
