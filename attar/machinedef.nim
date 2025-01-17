@@ -1,7 +1,31 @@
 import std/strformat
 import times
+import sdl2, sdl2/mixer
+import math
 
 let timeout = 0.1/60 # 60 Hz
+
+sdl2.init(INIT_AUDIO)
+
+# Generate triangle wave samples for audio
+const
+  sampleRate = 44100       # Standard audio sample rate (samples per second)
+  waveFreq = 480           # Frequency of the wave (in Hz)
+  waveLength = sampleRate div waveFreq  # Number of samples per cycle
+const channel = 1
+var waveSamples = newSeq[int16](waveLength)
+for i in 0..<waveLength:
+  let time = i / sampleRate
+  let period = 1/waveFreq
+  let cyclepos = floorMod(time,period)
+  waveSamples[i] = int16(toInt(32767*(2*abs(2*(cyclepos/period)-1)-1)))
+
+var waveChunk: Chunk
+waveChunk.abuf = cast[ptr uint8](waveSamples[0].addr)
+waveChunk.alen = 2 * waveLength
+waveChunk.volume = MIX_MAX_VOLUME
+if mixer.openAudio(sampleRate, MIX_DEFAULT_FORMAT, 2, 4096) != 0:
+  quit("SDL_mixer could not initialize! SDL_mixer")
 
 type chip8* = object
   ram*: array[2048, uint8]
@@ -55,9 +79,12 @@ proc tick*(machine: ref chip8) =
         echo fmt"Ticking timer {machine.dt}"
     if machine.st > 0:
       machine.st -= 1
-      # TODO add beep sound
+      if playChannel(channel, addr waveChunk, -1) == -1:
+        echo "Unable to play sound! SDL_mixer Error: ", getError()
       when not defined(release):
         echo fmt"Ticking timer {machine.st}"
+    else:
+      let _ = haltChannel(channel)
 
 func createChip8*(): ref chip8 =
 
