@@ -258,9 +258,9 @@ proc random*(machine: ref chip8, lower: uint16) =
     echo fmt"Random: Store bitand({k}, {num}) = {result} in V{Vx} "
 
 proc set_st*(machine: ref chip8, lower: uint16) =
-  var x = lower
-  x.bitslice(8..11)
-  machine.st = uint8(x)
+  var Vx = lower
+  Vx.bitslice(8..11)
+  machine.st = uint8(machine.variables[Vx])
 
 proc skip_not_pressed*(machine: ref chip8, lower: uint16) =
   let state = getKeyboardState(nil)
