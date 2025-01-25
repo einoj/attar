@@ -1,5 +1,6 @@
 import std/strformat
 import times
+import threadpool, std/os
 import sdl2, sdl2/mixer
 import math
 
@@ -35,7 +36,6 @@ type chip8* = object
   i*: uint16
   framebuf*: array[64*32, uint8]
   dt: uint8
-  st*: uint8
   lasttick: float
   jmpflag*: bool
   input*: array[16, uint8]
@@ -69,6 +69,29 @@ proc setDT*(machine: ref chip8, value: uint8) =
   when not defined(release):
     echo fmt"Delay Timer set to 0x{machine.dt:x}"
 
+var comm_chan*: Channel[uint8]
+
+proc send_st_msg*(st: uint8) =
+    comm_chan.send(st)
+
+# Sound timer runs in its own thread
+# it counts down at 60 Hz, i.e. period of 16.666... ms
+proc tick_st*() =
+  var st: uint8 = 0
+  while true:
+    let msg =  comm_chan.tryRecv()
+    if msg.dataAvailable:
+      st = msg.msg
+    if st > 0:
+      st -= 1
+      if playChannel(channel, addr waveChunk, -1) == -1:
+        echo "Unable to play sound! SDL_mixer Error: ", getError()
+      when not defined(release):
+        echo fmt"Ticking timer {st}"
+    else:
+      let _ = haltChannel(channel)
+    sleep(16)
+
 proc tick*(machine: ref chip8) =
   let now = cpuTime()
   if now - machine.lasttick > timeout:
@@ -77,14 +100,6 @@ proc tick*(machine: ref chip8) =
       machine.dt -= 1
       when not defined(release):
         echo fmt"Ticking timer {machine.dt}"
-    if machine.st > 0:
-      machine.st -= 1
-      if playChannel(channel, addr waveChunk, -1) == -1:
-        echo "Unable to play sound! SDL_mixer Error: ", getError()
-      when not defined(release):
-        echo fmt"Ticking timer {machine.st}"
-    else:
-      let _ = haltChannel(channel)
 
 func createChip8*(): ref chip8 =
 

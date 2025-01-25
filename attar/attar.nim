@@ -5,6 +5,7 @@ import std/bitops
 import opfuncs
 import video
 import os
+import threadpool
 
 proc loadrom(romname: string, machine: ref chip8) =
   var stream = newFileStream(romname, fmRead)
@@ -23,6 +24,8 @@ proc loadrom(romname: string, machine: ref chip8) =
   stream.close()
 
 proc alu(machine: ref chip8) =
+  comm_chan.open()
+  spawn tick_st()
   while machine.pc<0x1000:
     machine.tick()
     var n: uint16 = bitops.bitor(machine.ram[machine.pc].int shl 8, machine.ram[machine.pc+1].int).uint16

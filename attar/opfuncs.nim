@@ -260,7 +260,7 @@ proc random*(machine: ref chip8, lower: uint16) =
 proc set_st*(machine: ref chip8, lower: uint16) =
   var Vx = lower
   Vx.bitslice(8..11)
-  machine.st = uint8(machine.variables[Vx])
+  send_st_msg(machine.variables[Vx])
 
 proc skip_not_pressed*(machine: ref chip8, lower: uint16) =
   let state = getKeyboardState(nil)
